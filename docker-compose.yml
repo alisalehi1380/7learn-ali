@@ -42,6 +42,23 @@ services:
       - "database:db"
     depends_on:
       - database
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.1.3
+    volumes:
+      - db-data:/usr/share/elasticsearch/data
+    environment:
+      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - discovery.type=single-node
+      - cluster.routing.allocation.disk.threshold_enabled=false
+      - bootstrap.memory_lock=true
+      - action.destructive_requires_name=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - "9200:9200"
 
 volumes:
   db-data: ~
