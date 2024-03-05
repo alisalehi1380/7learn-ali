@@ -3,24 +3,20 @@
 namespace App\Repositories\Eloquent;
 
 use App\Repositories\EloquentRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class BaseRepository implements EloquentRepositoryInterface
 {
-    protected $model;
-    
+    protected Model $model;
+
     public function __construct(Model $model)
     {
         $this->model = $model;
     }
-    
-    public function create(array $attributes): Model
+
+    public function all(): Collection
     {
-        return $this->model->create($attributes);
-    }
-    
-    public function find($id): ?Model
-    {
-        return $this->model->find($id);
+        return $this->model->all();
     }
 }

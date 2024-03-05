@@ -4,7 +4,8 @@ namespace App\Repositories\ElasticSearch;
 
 use Illuminate\Support\Collection;
 
-interface ElasticsearchInterface
+interface ElasticSearchInterface
 {
     public function search(): Collection;
+    public function create(): void;
 }

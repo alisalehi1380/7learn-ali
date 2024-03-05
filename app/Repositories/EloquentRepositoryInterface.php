@@ -2,9 +2,9 @@
 
 namespace App\Repositories;
 
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Collection;
 
 interface EloquentRepositoryInterface
 {
-    public function find($id): ?Model;
+    public function all(): ?Collection;
 }

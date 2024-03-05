@@ -31,4 +31,9 @@ class ElasticSearchRepository implements ElasticsearchInterface
 
         return $this->client->search($params);
     }
+
+    public function create($index,  $data) : void
+    {
+
+    }
 }
