@@ -16,7 +16,7 @@ class PostControllerTest extends TestCase
     {
         $posts = Post::factory(3)->has(Tag::factory()->count(2))->create();
         $expectedData = PostCollection::make($posts)->response()->getData(true);
-        $response = $this->get(route('api.post.index'));
+        $response = $this->get(route('api.v2.post.index'));
         
         $response->assertSuccessful();
         $response->assertJson($expectedData);
