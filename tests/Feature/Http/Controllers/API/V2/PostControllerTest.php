@@ -8,7 +8,6 @@ use App\Models\Tag;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-
 class PostControllerTest extends TestCase
 {
     use RefreshDatabase;
@@ -16,13 +15,11 @@ class PostControllerTest extends TestCase
     public function testIndex()
     {
         $posts = Post::factory(3)->has(Tag::factory()->count(2))->create();
+        $expectedData = PostCollection::make($posts)->response()->getData(true);
         $response = $this->get(route('api.post.index'));
         
         $response->assertSuccessful();
-        
-        $expectedData = PostCollection::make($posts)->response()->getData(true);
         $response->assertJson($expectedData);
-        
         $response->assertJsonStructure([
             'data' => [
                 '*' => [
