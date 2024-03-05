@@ -1,65 +1,47 @@
-version: "3.7"
+version: "3.8"
 services:
-  app:
+  php:
+    container_name: php
     build:
+      context: .
+      target: php
       args:
-        user: alisalehi
-        uid: 1000
-      context: ./
-      dockerfile: Dockerfile
-    image: 7learn
-    container_name: 7learn-app
-    restart: unless-stopped
+        - APP_ENV=${APP_ENV}
+    environment:
+      - APP_ENV=${APP_ENV}
     working_dir: /var/www
     volumes:
       - ./:/var/www
-    networks:
-      - 7learn
-
-
-  db:
-    image: mysql:8.0
-    container_name: 7learn-mysql
-    restart: unless-stopped
-    environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_USER: ${DB_USERNAME}
-      SERVICE_TAGS: dev
-      SERVICE_NAME: mysql
-    volumes:
-      - ./services/mysql:/docker-entrypoint-initdb.d
-    networks:
-      - 7learn
-
-  nginx:
-    image: nginx:alpine
-    container_name: 7learn-nginx
-    restart: unless-stopped
     ports:
-      - 1212:80
+      - 9000:8080
+    depends_on:
+      - database
+
+  database:
+    container_name: database
+    image: mysql:8.0
+    ports:
+      -   3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_DATABASE: '${DB_DATABASE}'
+      MYSQL_USER: '${DB_USERNAME}'
+      MYSQL_PASSWORD: '${DB_PASSWORD}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
     volumes:
-      - ./:/var/www
-      - ./services/nginx:/etc/nginx/conf.d/
-    networks:
-      - 7learn
+      - db-data:/var/lib/mysql
 
   phpmyadmin:
-    image: phpmyadmin:5.2.1
-    container_name: 7learn-phpmyadmin
-    links:
-      - db
-    environment:
-      PMA_HOST: db
-      PMA_PORT: 3306
+    container_name: phpmyadmin
+    image: phpmyadmin:latest
     ports:
       - 8081:80
-    networks:
-      - 7learn
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD}'
+    links:
+      - "database:db"
     depends_on:
-      - db
+      - database
 
-networks:
-  7learn:
-    driver: bridge
+volumes:
+  db-data: ~
