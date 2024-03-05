@@ -18,8 +18,6 @@ class DatabaseSeeder extends Seeder
     
     public function run(): void
     {
-        Model::unguard();
-        
         $categories = Category::factory(8)->create();
         $tags = Tag::factory(10)->create();
         $posts = Post::factory(2)->create();
@@ -27,11 +25,7 @@ class DatabaseSeeder extends Seeder
         $this->syncPostsWithTags($posts, $tags);
         $this->syncCategoriesWithTags($tags, $categories);
 
-//        $this->addPostsInES($posts);
-        
-        SendSms::dispatch();
-        
-        Model::reguard();
+        $this->addPostsInES($posts);
     }
     
     private function syncPostsWithTags(Collection $posts, Collection $tags): void
@@ -50,39 +44,31 @@ class DatabaseSeeder extends Seeder
         });
     }
     
-    private function addPostsInES($posts): void
+    private function addPostsInES(Collection $posts): void
     {
         try {
-            $elastic = ClientBuilder::create()->build();
-            
-            foreach ($posts as $post) {
-                $params = [
-                    'index' => 'posts',
-                    'id'    => $post->id,
-                    'body'  => [
-                        'title'      => $post->title,
-                        'summery'    => $post->summery,
-                        'content'    => $post->content,
-                        'created_at' => $post->created_at,
-                        'updated_at' => $post->created_at,
-                    ]
-                ];
-                
-                $response = $elastic->index($params);
-                
-                echo $post->id . "." . $post->title . " is transferred.\n";
-                
-                
-                if ($response['result'] == 'created') {
-                    echo 'Posts added successfully to Elasticsearch.';
-                } else {
-                    echo 'Failed to add Posts to Elasticsearch.';
-                }
-                
-            }
+//            $elastic = ClientBuilder::create()->build();
+//
+//            foreach ($posts as $post) {
+//                $params = [
+//                    'index' => 'posts',
+//                    'id'    => $post->id,
+//                    'body'  => [
+//                        'title'      => $post->title,
+//                        'summery'    => $post->summery,
+//                        'content'    => $post->content,
+//                        'created_at' => $post->created_at,
+//                        'updated_at' => $post->created_at,
+//                    ]
+//                ];
+//
+//                $elastic->index($params);
+//            }
         } catch (\Exception $e) {
             info($e->getMessage());
             echo 'Failed to add Posts to Elasticsearch.';
         }
+        
+        SendSms::dispatch();
     }
 }
