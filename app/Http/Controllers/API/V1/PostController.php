@@ -5,13 +5,12 @@ namespace App\Http\Controllers\API\V1;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
-use App\Repositories\ElasticSearch\ElasticSearchRepository;
 
 class PostController extends Controller
 {
-    public function index(ElasticSearchRepository $elasticSearchRepository)
+    public function index()
     {
-        $data = $elasticSearchRepository->search();
+        $data = Post::search('your_query_here')->get();
         return PostResource::make($data);
     }
 
