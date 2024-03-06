@@ -1,4 +1,3 @@
-# Used for prod build.
 FROM php:8.2-fpm as php
 
 # Set environment variables
