@@ -16,14 +16,10 @@ class PostCollection extends ResourceCollection
 
     public function transformPost($post): array
     {
-        return [
-            'name' => $post->name,
-            'summery' => $post->summery,
-            'content' => $post->content,
-            'created_at' => $post->created_at,
-            'updated_at' => $post->updated_at,
+        return array_values([
+            PostResource::make($post),
             'tags' => $post->tags->map([$this, 'transformTag']),
-        ];
+        ]);
     }
 
     public function transformTag($tag): array
